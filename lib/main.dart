@@ -1,7 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'Page2.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:sembast/sembast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
+import 'screens/Page2.dart';
+import 'models/transaction.dart';
+import 'provider/transaction_provider.dart';
+import 'screens/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +20,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TransactionProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blueGrey,
+        ),
+        home: const MyHomePage(
+          title: "Flutter",
+        ),
       ),
-      home: const MyHomePage(title: 'แอพบัญชีธนาคาร'),
     );
   }
 }
@@ -34,28 +49,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title), actions: [
-        IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Page2()));
-            })
-      ]),
-      body: ListView.builder(
-          itemCount: 5,
-          itemBuilder: (context, int index) {
-            return Card(
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                elevation: 3,
-                child: ListTile(
-                  leading: CircleAvatar(
-                      radius: 20, child: Icon(Icons.attach_money, size: 30)),
-                  title: Text("รายการที่ ${index + 1}"),
-                  subtitle: Text("รายการที่ ${index + 1}"),
-                ));
-          }),
-    );
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: Colors.blueGrey,
+          body: TabBarView(
+            children: [
+              HomeScreen(),
+              Page2(),
+            ],
+          ),
+          bottomNavigationBar: TabBar(            
+            tabs: [
+              Tab(icon: Icon(Icons.home), text: "หน้าหลัก"),
+              Tab(icon: Icon(Icons.add), text: "เพิ่มรายการ"),
+            ],
+          ),
+        ));
   }
 }
